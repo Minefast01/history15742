@@ -231,14 +231,7 @@
   <div id="container">
     <!-- วิดีโอ Section -->
     <div id="video-section" class="active">
-      <div id="youtube-player" style="width:720px;max-width:98vw;aspect-ratio:16/9;border-radius:16px;box-shadow:0 4px 32px #0005;overflow:hidden;"></div>
-      <!-- ซ่อนชื่อช่อง YouTube ด้วย CSS -->
-      <style>
-        /* ซ่อน overlay ชื่อช่อง YouTube */
-        .ytp-chrome-top, .ytp-title, .ytp-title-channel, .ytp-title-link {
-          display: none !important;
-        }
-      </style>
+      <iframe id="gdrive-video" src="https://streamable.com/e/orfz72?autoplay=1" width="720" height="405" allow="autoplay; fullscreen" allowfullscreen style="border-radius:16px;box-shadow:0 4px 32px #0005;max-width:98vw;border:none;"></iframe>
       <button id="start-btn" style="display:none;">เริ่มเกม</button>
     </div>
     <!-- เกม Section -->
@@ -325,55 +318,22 @@
     const gameSection = document.getElementById('game-section');
     const resultSection = document.getElementById('result-section');
     const startBtn = document.getElementById('start-btn');
-    // const introVideo = document.getElementById('intro-video'); // ลบออก
+    const gdriveVideo = document.getElementById('gdrive-video');
 
-    // YouTube Player API
-    let ytPlayer;
-    let ytEnded = false;
-    function onYouTubeIframeAPIReady() {
-      ytPlayer = new YT.Player('youtube-player', {
-        videoId: '-NeF2jrOWio',
-        width: 720,
-        height: 405,
-        playerVars: {
-          autoplay: 1,
-          controls: 1,
-          rel: 0,
-          modestbranding: 1,
-          fs: 1,
-          showinfo: 0, // ปิดชื่อวิดีโอ/ช่อง (deprecated แต่ยังมีผลบางกรณี)
-          iv_load_policy: 3 // ปิด annotation
-        },
-        events: {
-          'onReady': function(e) {
-            e.target.playVideo();
-          },
-          'onStateChange': function(e) {
-            // 0 = ended
-            if (e.data === 0) {
-              ytEnded = true;
-              startBtn.style.display = '';
-              startBtn.focus();
-            }
-          }
-        }
-      });
-    }
-    // โหลด YouTube API
-    (function() {
-      var tag = document.createElement('script');
-      tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    })();
+    // ซ่อนปุ่ม "เริ่มเกม" หลัง 15 วินาที (หรือปรับตามความเหมาะสม)
+    setTimeout(() => {
+      startBtn.style.display = '';
+      startBtn.focus();
+    }, 15000);
 
-    // ปุ่มเริ่มเกม
+    // ไม่ต้องฟัง event ended ของ video แล้ว
+    // gdriveVideo.addEventListener('ended', ...);
+
     startBtn.addEventListener('click', () => {
       videoSection.classList.remove('active');
       gameSection.classList.add('active');
       startGame();
-      // หยุดวิดีโอ youtube ถ้ายังเล่นอยู่
-      if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
+      // ไม่ต้อง pause วิดีโอ iframe
     });
 
     // ----------------- GAME LOGIC -----------------
