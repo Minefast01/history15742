@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>เกมประวัติศาสตร์: การสถาปนากรุงรัตนโกสินทร์</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* ...existing code... */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      font-family: 'Sarabun', 'TH SarabunPSK', 'Leelawadee UI', Tahoma, sans-serif;
+      background: url('https://cdn.pixabay.com/photo/2017/01/31/13/14/pattern-2027496_1280.png') repeat;
+      background-size: 400px 400px;
+      box-sizing: border-box;
+    }
+    body {
+      min-height: 100vh;
+      min-width: 100vw;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: rgba(255,255,255,0.7);
+      position: absolute;
+      top: 0; left: 0;
+    }
+    #video-section, #game-section, #result-section {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    #video-section.active, #game-section.active, #result-section.active {
+      display: flex;
+    }
+    #start-btn, #restart-btn {
+      margin-top: 24px;
+      font-size: 2rem;
+      padding: 12px 36px;
+      border-radius: 8px;
+      border: none;
+      background: #c19e4b;
+      color: #fff;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0002;
+      transition: background 0.2s;
+    }
+    #start-btn:hover, #restart-btn:hover {
+      background: #a17c2b;
+    }
+    .maze-container {
+      position: relative;
+      width: 700px;
+      height: 500px;
+      background: #fffbe9;
+      border: 8px solid #c19e4b;
+      border-radius: 24px;
+      box-shadow: 0 4px 32px #0002;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .maze-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0; left: 0;
+    }
+    .maze-cell {
+      border: 1px solid #e0c98d;
+      position: relative;
+      background: transparent;
+    }
+    .player {
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(circle at 60% 40%, #f7d488 60%, #c19e4b 100%);
+      border-radius: 50%;
+      margin: 10%;
+      border: 3px solid #a17c2b;
+      box-shadow: 0 2px 8px #0003;
+      z-index: 2;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      margin: auto;
+      animation: pop 0.2s;
+    }
+    @keyframes pop {
+      0% { transform: scale(0.7);}
+      100% { transform: scale(1);}
+    }
+    .rock {
+      width: 70%;
+      height: 70%;
+      background: #888;
+      border-radius: 50% 40% 60% 50%/60% 50% 40% 50%;
+      margin: 15%;
+      border: 3px solid #444;
+      box-shadow: 0 2px 8px #0005;
+      z-index: 2;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      animation: pop 0.2s;
+    }
+    .rock.broken {
+      background: repeating-linear-gradient(135deg, #bbb 0 10px, #888 10px 20px);
+      opacity: 0.5;
+      pointer-events: none;
+      transition: opacity 0.5s;
+    }
+    .score-box {
+      position: absolute;
+      top: 12px;
+      left: 24px;
+      background: #fffbe9cc;
+      border: 2px solid #c19e4b;
+      border-radius: 12px;
+      padding: 8px 24px;
+      font-size: 1.3rem;
+      color: #a17c2b;
+      font-weight: bold;
+      z-index: 10;
+      box-shadow: 0 2px 8px #0001;
+    }
+    .question-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .question-box {
+      background: #fffbe9;
+      border: 4px solid #c19e4b;
+      border-radius: 18px;
+      padding: 32px 32px 24px 32px;
+      min-width: 340px;
+      max-width: 90vw;
+      box-shadow: 0 4px 32px #0003;
+      font-size: 1.2rem;
+      color: #333;
+      text-align: left;
+      position: relative;
+    }
+    .question-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 18px;
+      color: #a17c2b;
+    }
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .choice-btn {
+      background: #e0c98d;
+      border: 2px solid #c19e4b;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 1.1rem;
+      color: #333;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-align: left;
+    }
+    .choice-btn:hover {
+      background: #c19e4b;
+      color: #fff;
+    }
+    .question-feedback {
+      margin-top: 18px;
+      font-size: 1.1rem;
+      color: #a17c2b;
+      font-weight: bold;
+    }
+    #result-section {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255,255,255,0.9);
+    }
+    .result-score {
+      font-size: 2.5rem;
+      color: #a17c2b;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+    .result-label {
+      font-size: 1.3rem;
+      margin-bottom: 24px;
+      color: #333;
+    }
+    @media (max-width: 900px) {
+      .maze-container { width: 98vw; height: 60vw; max-width: 98vw; max-height: 80vw;}
+    }
+    @media (max-width: 600px) {
+      .maze-container { width: 99vw; height: 70vw; }
+      .question-box { min-width: 90vw;}
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <!-- วิดีโอ Section -->
+    <div id="video-section" class="active">
+      <div id="youtube-player" style="width:720px;max-width:98vw;aspect-ratio:16/9;border-radius:16px;box-shadow:0 4px 32px #0005;overflow:hidden;"></div>
+      <!-- ซ่อนชื่อช่อง YouTube ด้วย CSS -->
+      <style>
+        /* ซ่อน overlay ชื่อช่อง YouTube */
+        .ytp-chrome-top, .ytp-title, .ytp-title-channel, .ytp-title-link {
+          display: none !important;
+        }
+      </style>
+      <button id="start-btn" style="display:none;">เริ่มเกม</button>
+    </div>
+    <!-- เกม Section -->
+    <div id="game-section">
+      <div class="score-box">คะแนน: <span id="score">0</span></div>
+      <div class="maze-container">
+        <div class="maze-grid" id="maze-grid">
+          <!-- สร้าง grid ด้วย JS -->
+        </div>
+      </div>
+    </div>
+    <!-- ผลลัพธ์ Section -->
+    <div id="result-section">
+      <div class="result-score" id="final-score"></div>
+      <div class="result-label">คะแนนเต็ม 50 คะแนน</div>
+      <button id="restart-btn">เล่นใหม่</button>
+    </div>
+  </div>
+  <!-- Modal สำหรับคำถาม -->
+  <div id="question-modal" class="question-modal" style="display:none;">
+    <div class="question-box">
+      <div class="question-title" id="question-title"></div>
+      <div class="choices" id="choices"></div>
+      <div class="question-feedback" id="question-feedback"></div>
+    </div>
+  </div>
+  <script>
+    // ...existing code...
+    // ----------------- CONFIG -----------------
+    const questions = [
+      {
+        q: "พระมหากษัตริย์พระองค์ใดทรงสถาปนากรุงรัตนโกสินทร์เป็นราชธานี?",
+        choices: [
+          "A. พระเจ้าตากสินมหาราช",
+          "B. พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลกมหาราช",
+          "C. พระบาทสมเด็จพระจอมเกล้าเจ้าอยู่หัว",
+          "D. พระบาทสมเด็จพระปกเกล้าเจ้าอยู่หัว"
+        ],
+        answer: 1
+      },
+      {
+        q: "เหตุผลหลักที่ย้ายราชธานีจากฝั่งธนบุรีมาฝั่งพระนครคืออะไร?",
+        choices: [
+          "A. พื้นที่ฝั่งพระนครมีภูเขาและป่าไม้",
+          "B. ฝั่งธนบุรีไม่มีแม่น้ำ",
+          "C. ฝั่งธนบุรีคับแคบและไม่ปลอดภัย",
+          "D. ฝั่งพระนครมีประชากรมากกว่า"
+        ],
+        answer: 2
+      },
+      {
+        q: "วันที่มีการสถาปนากรุงรัตนโกสินทร์คือวันที่ใด?",
+        choices: [
+          "A. 13 เมษายน พ.ศ. 2325",
+          "B. 6 เมษายน พ.ศ. 2325",
+          "C. 5 ธันวาคม พ.ศ. 2475",
+          "D. 1 มกราคม พ.ศ. 2325"
+        ],
+        answer: 1
+      },
+      {
+        q: "ข้อใด _ไม่ใช่_ ปัจจัยที่ทำให้กรุงรัตนโกสินทร์เหมาะกับการเป็นราชธานี?",
+        choices: [
+          "A. มีแม่น้ำเจ้าพระยาไหลผ่าน",
+          "B. เป็นพื้นที่ลุ่มที่มีน้ำท่วมบ่อย",
+          "C. เหมาะแก่การวางผังเมือง",
+          "D. สามารถป้องกันข้าศึกได้ดี"
+        ],
+        answer: 1
+      },
+      {
+        q: "วัดใดเป็นที่ประดิษฐาน “พระแก้วมรกต”?",
+        choices: [
+          "A. วัดอรุณราชวราราม",
+          "B. วัดเบญจมบพิตร",
+          "C. วัดพระเชตุพนวิมลมังคลาราม",
+          "D. วัดพระศรีรัตนศาสดาราม"
+        ],
+        answer: 3
+      }
+    ];
+    // ----------------- VIDEO LOGIC -----------------
+    const videoSection = document.getElementById('video-section');
+    const gameSection = document.getElementById('game-section');
+    const resultSection = document.getElementById('result-section');
+    const startBtn = document.getElementById('start-btn');
+    // const introVideo = document.getElementById('intro-video'); // ลบออก
+
+    // YouTube Player API
+    let ytPlayer;
+    let ytEnded = false;
+    function onYouTubeIframeAPIReady() {
+      ytPlayer = new YT.Player('youtube-player', {
+        videoId: '-NeF2jrOWio',
+        width: 720,
+        height: 405,
+        playerVars: {
+          autoplay: 1,
+          controls: 1,
+          rel: 0,
+          modestbranding: 1,
+          fs: 1,
+          showinfo: 0, // ปิดชื่อวิดีโอ/ช่อง (deprecated แต่ยังมีผลบางกรณี)
+          iv_load_policy: 3 // ปิด annotation
+        },
+        events: {
+          'onReady': function(e) {
+            e.target.playVideo();
+          },
+          'onStateChange': function(e) {
+            // 0 = ended
+            if (e.data === 0) {
+              ytEnded = true;
+              startBtn.style.display = '';
+              startBtn.focus();
+            }
+          }
+        }
+      });
+    }
+    // โหลด YouTube API
+    (function() {
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    })();
+
+    // ปุ่มเริ่มเกม
+    startBtn.addEventListener('click', () => {
+      videoSection.classList.remove('active');
+      gameSection.classList.add('active');
+      startGame();
+      // หยุดวิดีโอ youtube ถ้ายังเล่นอยู่
+      if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
+    });
+
+    // ----------------- GAME LOGIC -----------------
+    const mazeGrid = document.getElementById('maze-grid');
+    const scoreBox = document.getElementById('score');
+    const questionModal = document.getElementById('question-modal');
+    const questionTitle = document.getElementById('question-title');
+    const choicesBox = document.getElementById('choices');
+    const questionFeedback = document.getElementById('question-feedback');
+    const finalScore = document.getElementById('final-score');
+    const restartBtn = document.getElementById('restart-btn');
+
+    // Maze config
+    const ROWS = 5, COLS = 7;
+    let mazePath = [];
+    let rockPositions = [];
+    let rockQuestions = [];
+    let playerPos = {row: 0, col: 0};
+    let score = 0;
+    let rocksBroken = 0;
+    let answered = {};
+
+    function startGame() {
+      // Reset
+      mazeGrid.innerHTML = '';
+      score = 0;
+      rocksBroken = 0;
+      answered = {};
+      scoreBox.textContent = score;
+      // สร้างเส้นทางเขาวงกต (เส้นตรง zigzag)
+      mazePath = [];
+      let dir = 1; // 1=ขวา, -1=ซ้าย
+      for (let r = 0; r < ROWS; r++) {
+        let row = [];
+        for (let c = 0; c < COLS; c++) {
+          if ((dir === 1 && c === 0) || (dir === -1 && c === COLS-1) || (mazePath.length && row.length < mazePath[mazePath.length-1].length)) {
+            row.push(false);
+          } else {
+            row.push(true);
+          }
+        }
+        mazePath.push(row);
+        dir *= -1;
+      }
+      // สร้างตำแหน่งเส้นทาง (zigzag)
+      let pathCells = [];
+      let c = 0, r = 0, d = 1;
+      while (r < ROWS) {
+        pathCells.push({row: r, col: c});
+        if ((d === 1 && c === COLS-1) || (d === -1 && c === 0)) {
+          r++;
+          d *= -1;
+        } else {
+          c += d;
+        }
+      }
+      // สุ่มตำแหน่งหิน 5 จุด (ไม่นับจุดเริ่ม/จบ)
+      rockPositions = [];
+      let validCells = pathCells.slice(1, -1);
+      let indices = [];
+      while (indices.length < 5) {
+        let idx = Math.floor(Math.random() * validCells.length);
+        if (!indices.includes(idx)) indices.push(idx);
+      }
+      rockPositions = indices.map(i => validCells[i]);
+      // สุ่มจับคู่คำถามกับหิน
+      let qIdx = [0,1,2,3,4];
+      for (let i = qIdx.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [qIdx[i], qIdx[j]] = [qIdx[j], qIdx[i]];
+      }
+      rockQuestions = qIdx;
+      // สร้าง grid
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          let cell = document.createElement('div');
+          cell.className = 'maze-cell';
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+          // ถ้าเป็นเส้นทาง
+          if (pathCells.find(p => p.row === r && p.col === c)) {
+            cell.style.background = '#fffde7';
+          } else {
+            cell.style.background = '#e0c98d';
+          }
+          mazeGrid.appendChild(cell);
+        }
+      }
+      // วาง player
+      playerPos = {row: pathCells[0].row, col: pathCells[0].col};
+      updatePlayer();
+      // วางหิน
+      for (let i = 0; i < 5; i++) {
+        let {row, col} = rockPositions[i];
+        let idx = row * COLS + col;
+        let cell = mazeGrid.children[idx];
+        let rock = document.createElement('div');
+        rock.className = 'rock';
+        rock.textContent = '🪨';
+        rock.dataset.rock = i;
+        cell.appendChild(rock);
+      }
+      // ฟังชั่น keydown
+      window.onkeydown = handleKey;
+    }
+
+    function updatePlayer() {
+      // ลบ player เดิม
+      document.querySelectorAll('.player').forEach(e => e.remove());
+      // วาง player ใหม่
+      let idx = playerPos.row * COLS + playerPos.col;
+      let cell = mazeGrid.children[idx];
+      let player = document.createElement('div');
+      player.className = 'player';
+      cell.appendChild(player);
+    }
+
+    function handleKey(e) {
+      if (questionModal.style.display === 'flex') return;
+      let {row, col} = playerPos;
+      let next = {row, col};
+      if (e.key === 'ArrowRight' || e.key === 'd') next.col++;
+      else if (e.key === 'ArrowLeft' || e.key === 'a') next.col--;
+      else if (e.key === 'ArrowUp' || e.key === 'w') next.row--;
+      else if (e.key === 'ArrowDown' || e.key === 's') next.row++;
+      else return;
+      // ตรวจสอบว่าเดินได้ไหม (อยู่ใน path)
+      if (next.row < 0 || next.row >= ROWS || next.col < 0 || next.col >= COLS) return;
+      let inPath = false;
+      for (let i = 0; i < mazeGrid.children.length; i++) {
+        let cell = mazeGrid.children[i];
+        if (parseInt(cell.dataset.row) === next.row && parseInt(cell.dataset.col) === next.col) {
+          if (cell.style.background === 'rgb(255, 253, 231)') inPath = true;
+        }
+      }
+      if (!inPath) return;
+      playerPos = next;
+      updatePlayer();
+      // ตรวจสอบว่าชนหินไหม
+      let rockIdx = rockPositions.findIndex(p => p.row === next.row && p.col === next.col);
+      if (rockIdx !== -1 && !answered[rockIdx]) {
+        showQuestion(rockIdx);
+      } else if (next.row === ROWS-1 && next.col === (ROWS%2===1?0:COLS-1)) {
+        // ถึงจุดจบ
+        if (rocksBroken === 5) showResult();
+      }
+    }
+
+    function showQuestion(rockIdx) {
+      questionModal.style.display = 'flex';
+      let q = questions[rockQuestions[rockIdx]];
+      questionTitle.innerHTML = '❓ ' + q.q;
+      choicesBox.innerHTML = '';
+      questionFeedback.textContent = '';
+      q.choices.forEach((choice, i) => {
+        let btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.textContent = choice;
+        btn.onclick = () => {
+          if (i === q.answer) {
+            questionFeedback.textContent = '✅ ถูกต้อง! +10 คะแนน';
+            score += 10;
+            scoreBox.textContent = score;
+          } else {
+            questionFeedback.textContent = '❌ ไม่ถูกต้อง';
+          }
+          // ทำลายหิน
+          let {row, col} = rockPositions[rockIdx];
+          let idx = row * COLS + col;
+          let cell = mazeGrid.children[idx];
+          let rock = cell.querySelector('.rock');
+          if (rock) {
+            rock.classList.add('broken');
+            setTimeout(() => rock.remove(), 600);
+          }
+          answered[rockIdx] = true;
+          rocksBroken++;
+          setTimeout(() => {
+            questionModal.style.display = 'none';
+            // ถ้าตอบครบ 5 ข้อ
+            if (rocksBroken === 5) {
+              setTimeout(showResult, 400);
+            }
+          }, 900);
+        };
+        choicesBox.appendChild(btn);
+      });
+    }
+
+    function showResult() {
+      gameSection.classList.remove('active');
+      resultSection.classList.add('active');
+      finalScore.textContent = `คุณได้ ${score} คะแนน`;
+      window.onkeydown = null;
+    }
+
+    restartBtn.onclick = () => {
+      resultSection.classList.remove('active');
+      gameSection.classList.add('active');
+      startGame();
+    };
+
+    // เริ่มต้นแสดงวิดีโอ
+    videoSection.classList.add('active');
+    gameSection.classList.remove('active');
+    resultSection.classList.remove('active');
+    // ...existing code...
+  </script>
+</body>
+</html>
