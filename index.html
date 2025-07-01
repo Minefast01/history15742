@@ -249,6 +249,17 @@
           <!-- สร้าง grid ด้วย JS -->
         </div>
       </div>
+      <!-- ปุ่มควบคุมทิศทาง -->
+      <div id="maze-controls" style="margin-top:24px;display:flex;flex-direction:column;align-items:center;user-select:none;">
+        <div>
+          <button class="maze-btn" data-dir="up" style="font-size:2rem;width:56px;height:56px;border-radius:50%;margin:2px;">^</button>
+        </div>
+        <div>
+          <button class="maze-btn" data-dir="left" style="font-size:2rem;width:56px;height:56px;border-radius:50%;margin:2px;">&lt;</button>
+          <button class="maze-btn" data-dir="down" style="font-size:2rem;width:56px;height:56px;border-radius:50%;margin:2px;">v</button>
+          <button class="maze-btn" data-dir="right" style="font-size:2rem;width:56px;height:56px;border-radius:50%;margin:2px;">&gt;</button>
+        </div>
+      </div>
     </div>
     <!-- ผลลัพธ์ Section -->
     <div id="result-section">
@@ -495,10 +506,11 @@
       if (questionModal.style.display === 'flex') return;
       let {row, col} = playerPos;
       let next = {row, col};
-      if (e.key === 'ArrowRight' || e.key === 'd') next.col++;
-      else if (e.key === 'ArrowLeft' || e.key === 'a') next.col--;
-      else if (e.key === 'ArrowUp' || e.key === 'w') next.row--;
-      else if (e.key === 'ArrowDown' || e.key === 's') next.row++;
+      // รองรับทั้งลูกศรและ < ^ v >
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === '>') next.col++;
+      else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === '<') next.col--;
+      else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === '^') next.row--;
+      else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'v') next.row++;
       else return;
       // ตรวจสอบว่าเดินได้ไหม (อยู่ใน path)
       if (next.row < 0 || next.row >= ROWS || next.col < 0 || next.col >= COLS) return;
@@ -581,6 +593,23 @@
     gameSection.classList.remove('active');
     resultSection.classList.remove('active');
     // ...existing code...
+    // เพิ่ม event ให้ปุ่มควบคุม
+    document.addEventListener('DOMContentLoaded', function() {
+      const controls = document.getElementById('maze-controls');
+      if (controls) {
+        controls.addEventListener('click', function(e) {
+          if (e.target.classList.contains('maze-btn')) {
+            let dir = e.target.dataset.dir;
+            let fakeEvent = { key: '' };
+            if (dir === 'up') fakeEvent.key = 'ArrowUp';
+            else if (dir === 'down') fakeEvent.key = 'ArrowDown';
+            else if (dir === 'left') fakeEvent.key = 'ArrowLeft';
+            else if (dir === 'right') fakeEvent.key = 'ArrowRight';
+            handleKey(fakeEvent);
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>
