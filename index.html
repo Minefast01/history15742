@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -542,14 +540,18 @@
             // Find all path cells except start and end
             for (let y = 0; y < 5; y++) {
                 for (let x = 0; x < 7; x++) {
-                    if (mazePattern[y][x] === 1) {
+                    if (
+                        mazePattern[y][x] === 1 &&
+                        !(x === 0 && y === 0) && // not start
+                        !(x === 6 && y === 4)    // not end
+                    ) {
                         pathCells.push({ x, y });
                     }
                 }
             }
             
-            // Randomly select 5 positions for stones
-            const shuffled = pathCells.sort(() => 0.5 - Math.random());
+            // Shuffle and pick 5 unique positions for stones
+            const shuffled = pathCells.slice().sort(() => 0.5 - Math.random());
             return shuffled.slice(0, 5);
         }
 
