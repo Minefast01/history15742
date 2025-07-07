@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -14,42 +16,80 @@
 
         body {
             font-family: 'Sarabun', sans-serif;
-            background: linear-gradient(135deg, #8B4513, #D2B48C);
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="thai-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="2" fill="%23FFD700" opacity="0.3"/><path d="M5,5 Q10,0 15,5 Q10,10 5,5" fill="%23CD853F" opacity="0.2"/></pattern></defs><rect width="100" height="100" fill="url(%23thai-pattern)"/></svg>');
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #F4A460 100%);
             min-height: 100vh;
+            position: relative;
             overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFD700' fill-opacity='0.1'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm0 0c0 11.046 8.954 20 20 20s20-8.954 20-20-8.954-20-20-20-20 8.954-20 20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            z-index: -1;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 3px solid #FFD700;
+        }
+
+        .header h1 {
+            color: #8B4513;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .credit {
+            color: #D2691E;
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-top: 15px;
         }
 
         .video-section {
-            position: relative;
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto 30px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
             border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 3px solid #FFD700;
         }
 
-        .video-wrapper {
+        .video-container {
             position: relative;
             width: 100%;
             height: 0;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            padding-bottom: 56.25%;
+            margin-bottom: 20px;
         }
 
-        #youtube-player {
+        .video-container iframe {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            border-radius: 15px;
         }
 
         .video-overlay {
@@ -58,62 +98,47 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, rgba(139, 69, 19, 0.3), rgba(255, 215, 0, 0.2));
+            background: rgba(139, 69, 19, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            border-radius: 15px;
             z-index: 10;
-            transition: opacity 0.5s ease;
         }
 
-        .video-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .title {
-            text-align: center;
-            color: #F5F5DC;
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            margin-bottom: 30px;
-        }
-
-        .start-button {
-            background: linear-gradient(135deg, #FFD700, #FFA500);
+        .start-game-btn {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
             color: #8B4513;
             border: none;
-            padding: 15px 40px;
-            font-size: 1.5rem;
+            padding: 15px 30px;
+            font-size: 1.3rem;
             font-weight: 600;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
             transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             display: none;
-            margin: 20px auto;
         }
 
-        .start-button:hover {
+        .start-game-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(255, 215, 0, 0.6);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
-        .credits {
-            text-align: center;
-            color: #F5F5DC;
-            font-size: 1rem;
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(139, 69, 19, 0.3);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        .start-game-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .game-section {
             display: none;
-            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 3px solid #FFD700;
         }
 
         .game-info {
@@ -121,172 +146,203 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding: 15px 25px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .score {
-            font-size: 1.3rem;
+        .score, .questions-left {
+            background: linear-gradient(45deg, #8B4513, #D2691E);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
             font-weight: 600;
-            color: #8B4513;
+            font-size: 1.1rem;
         }
 
         .maze-container {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
         }
 
         .maze {
             display: grid;
-            grid-template-columns: repeat(7, 60px);
-            grid-template-rows: repeat(5, 60px);
+            grid-template-columns: repeat(7, 40px);
+            grid-template-rows: repeat(5, 40px);
             gap: 2px;
-            margin: 0 auto;
+            background: #8B4513;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
 
-        .cell {
-            width: 60px;
-            height: 60px;
-            border: 2px solid #D2B48C;
+        .maze-cell {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .cell.path {
-            background: #F5F5DC;
-        }
-
-        .cell.wall {
-            background: #8B4513;
-        }
-
-        .cell.start {
-            background: #90EE90;
-        }
-
-        .cell.end {
-            background: #FFD700;
-        }
-
-        .cell.player {
-            background: #87CEEB;
-            box-shadow: 0 0 15px rgba(135, 206, 235, 0.8);
-        }
-
-        .cell.stone {
-            background: #696969;
+            font-size: 1.2rem;
             position: relative;
         }
 
-        .controls {
-            margin: 20px 0;
+        .maze-cell.wall {
+            background: #654321;
         }
 
-        .control-buttons {
+        .maze-cell.path {
+            background: #F4A460;
+        }
+
+        .maze-cell.start {
+            background: #90EE90;
+        }
+
+        .maze-cell.end {
+            background: #FFB6C1;
+        }
+
+        .maze-cell.player {
+            background: #4169E1 !important;
+            color: white;
+        }
+
+        .maze-cell.stone {
+            background: #696969;
+            color: white;
+        }
+
+        .controls {
             display: grid;
             grid-template-columns: repeat(3, 60px);
-            gap: 10px;
+            grid-template-rows: repeat(3, 60px);
+            gap: 5px;
             justify-content: center;
-            margin: 20px auto;
         }
 
         .control-btn {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
+            background: linear-gradient(45deg, #FFD700, #FFA500);
             border: none;
-            border-radius: 15px;
+            border-radius: 10px;
             font-size: 1.5rem;
             font-weight: bold;
             color: #8B4513;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
             transition: all 0.2s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
         }
 
         .control-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(255, 215, 0, 0.5);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .control-btn:active {
             transform: translateY(0);
         }
 
-        .question-modal {
+        .control-btn:nth-child(2) { grid-column: 2; grid-row: 1; }
+        .control-btn:nth-child(1) { grid-column: 1; grid-row: 2; }
+        .control-btn:nth-child(3) { grid-column: 3; grid-row: 2; }
+        .control-btn:nth-child(4) { grid-column: 2; grid-row: 3; }
+
+        .modal {
             display: none;
             position: fixed;
-            top: 0;
+            z-index: 1000;
             left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.7);
         }
 
-        .question-content {
-            background: linear-gradient(135deg, #F5F5DC, #FFFACD);
+        .modal-content {
+            background: white;
+            margin: 5% auto;
             padding: 30px;
             border-radius: 20px;
-            max-width: 600px;
             width: 90%;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 3px solid #FFD700;
+        }
+
+        .modal h2 {
+            color: #8B4513;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
             text-align: center;
         }
 
-        .question-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #8B4513;
+        .question {
+            font-size: 1.2rem;
             margin-bottom: 20px;
-            line-height: 1.4;
+            color: #333;
+            line-height: 1.6;
         }
 
-        .choices {
-            display: grid;
-            gap: 15px;
-            margin: 20px 0;
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .choice-btn {
-            background: rgba(255, 255, 255, 0.8);
-            border: 2px solid #D2B48C;
-            padding: 15px 20px;
-            border-radius: 15px;
-            font-size: 1.1rem;
-            color: #8B4513;
+        .option {
+            background: #F4A460;
+            border: 2px solid #D2691E;
+            padding: 15px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-align: left;
+            font-size: 1.1rem;
         }
 
-        .choice-btn:hover {
-            background: rgba(255, 215, 0, 0.3);
-            border-color: #FFD700;
+        .option:hover {
+            background: #FFD700;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: #FFD700;
+            border-color: #8B4513;
+        }
+
+        .submit-answer {
+            background: linear-gradient(45deg, #8B4513, #D2691E);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .submit-answer:hover {
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
         .result-section {
             display: none;
-            text-align: center;
-            padding: 40px;
             background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
             border-radius: 20px;
+            text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            margin: 20px auto;
-            max-width: 500px;
+            border: 3px solid #FFD700;
+        }
+
+        .result-section h2 {
+            color: #8B4513;
+            font-size: 2rem;
+            margin-bottom: 20px;
         }
 
         .final-score {
@@ -297,130 +353,230 @@
             margin-bottom: 20px;
         }
 
-        .restart-btn {
-            background: linear-gradient(135deg, #32CD32, #228B22);
-            color: white;
+        .play-again-btn {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #8B4513;
             border: none;
-            padding: 15px 40px;
+            padding: 15px 30px;
             font-size: 1.3rem;
             font-weight: 600;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(50, 205, 50, 0.4);
             transition: all 0.3s ease;
-            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .restart-btn:hover {
+        .play-again-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(50, 205, 50, 0.6);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .instructions {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #FFD700;
+        }
+
+        .instructions h3 {
+            color: #8B4513;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            color: #654321;
+            line-height: 1.6;
         }
 
         @media (max-width: 768px) {
-            .title {
-                font-size: 2rem;
+            .container {
+                padding: 10px;
             }
-            
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
             .maze {
-                grid-template-columns: repeat(7, 45px);
-                grid-template-rows: repeat(5, 45px);
+                grid-template-columns: repeat(7, 35px);
+                grid-template-rows: repeat(5, 35px);
             }
-            
-            .cell {
-                width: 45px;
-                height: 45px;
-                font-size: 1.2rem;
+
+            .maze-cell {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
             }
-            
-            .question-content {
+
+            .controls {
+                grid-template-columns: repeat(3, 50px);
+                grid-template-rows: repeat(3, 50px);
+            }
+
+            .modal-content {
+                margin: 10% auto;
                 padding: 20px;
-                margin: 20px;
+            }
+
+            .game-info {
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">เกมประวัติศาสตร์: การสถาปนากรุงรัตนโกสินทร์</h1>
-        
-        <div class="video-section">
-            <div class="video-wrapper">
-                <div id="youtube-player"></div>
-                <div class="video-overlay" id="videoOverlay">
-                    <div style="text-align: center; color: white;">
-                        <h2 style="font-size: 1.8rem; margin-bottom: 10px;">กำลังโหลดวิดีโอ...</h2>
-                        <p>โปรดรอสักครู่</p>
-                    </div>
-                </div>
+        <div class="header">
+            <h1>🏛️ เกมประวัติศาสตร์: การสถาปนากรุงรัตนโกสินทร์ 🏛️</h1>
+            <div class="credit">
+                จัดทำโดย ด.ช.ธนันชัย กัลพฤกษ์ ม.3/1 เลขที่ 5 ปี 2568
             </div>
-            <button class="start-button" id="startGameBtn">🎮 เริ่มเกม</button>
         </div>
 
-        <div class="credits">
-            จัดทำโดย ด.ช.ธนันชัย กัลพฤกษ์ ม.3/1 เลขที่ 5 ปี 2568
+        <div class="video-section">
+            <div class="video-container">
+                <div id="video-overlay" class="video-overlay">
+                    กำลังโหลดวิดีโอ...
+                </div>
+                <div id="youtube-player"></div>
+            </div>
+            <div style="text-align: center;">
+                <button id="start-game-btn" class="start-game-btn" disabled>
+                    🎮 เริ่มเกม
+                </button>
+            </div>
         </div>
 
-        <div class="game-section" id="gameSection">
+        <div id="game-section" class="game-section">
+            <div class="instructions">
+                <h3>🎯 วิธีเล่น</h3>
+                <p>เดินในเขาวงกตเพื่อเก็บหิน 5 ก้อน แล้วไปถึงจุดจบ เมื่อเดินชนหินจะมีคำถามให้ตอบ ตอบถูกได้ 10 คะแนน!</p>
+            </div>
+            
             <div class="game-info">
-                <div class="score">คะแนน: <span id="scoreDisplay">0</span>/50</div>
-                <div class="score">คำถามที่เหลือ: <span id="questionsLeft">5</span></div>
+                <div class="score">คะแนน: <span id="score">0</span>/50</div>
+                <div class="questions-left">หินที่เหลือ: <span id="questions-left">5</span></div>
             </div>
 
             <div class="maze-container">
-                <div class="maze" id="maze"></div>
-            </div>
-
-            <div class="controls">
-                <p style="color: #F5F5DC; margin-bottom: 15px; font-size: 1.1rem;">
-                    ใช้ปุ่มลูกศร หรือ WASD หรือปุ่มด้านล่าง
-                </p>
-                <div class="control-buttons">
-                    <div></div>
+                <div id="maze" class="maze"></div>
+                <div class="controls">
                     <button class="control-btn" onclick="movePlayer('up')">↑</button>
-                    <div></div>
                     <button class="control-btn" onclick="movePlayer('left')">←</button>
-                    <button class="control-btn" onclick="movePlayer('down')">↓</button>
                     <button class="control-btn" onclick="movePlayer('right')">→</button>
+                    <button class="control-btn" onclick="movePlayer('down')">↓</button>
                 </div>
             </div>
         </div>
 
-        <div class="result-section" id="resultSection">
-            <h2 style="color: #8B4513; margin-bottom: 20px;">🎉 เกมจบแล้ว!</h2>
-            <div class="final-score" id="finalScore">0/50</div>
-            <p style="color: #8B4513; font-size: 1.2rem; margin-bottom: 20px;">
-                ยินดีด้วย! คุณได้เรียนรู้เกี่ยวกับการสถาปนากรุงรัตนโกสินทร์แล้ว
+        <div id="result-section" class="result-section">
+            <h2>🎉 เกมจบแล้ว! 🎉</h2>
+            <div class="final-score" id="final-score">0/50</div>
+            <p style="font-size: 1.2rem; color: #8B4513; margin-bottom: 20px;">
+                ขอบคุณที่เล่นเกมประวัติศาสตร์การสถาปนากรุงรัตนโกสินทร์
             </p>
-            <button class="restart-btn" onclick="restartGame()">🔄 เล่นใหม่</button>
+            <button class="play-again-btn" onclick="resetGame()">🔄 เล่นใหม่</button>
         </div>
     </div>
 
-    <!-- Question Modal -->
-    <div class="question-modal" id="questionModal">
-        <div class="question-content">
-            <h3 class="question-title" id="questionText"></h3>
-            <div class="choices" id="choicesContainer"></div>
+    <!-- Modal สำหรับคำถาม -->
+    <div id="question-modal" class="modal">
+        <div class="modal-content">
+            <h2>📚 คำถามประวัติศาสตร์</h2>
+            <div id="question-text" class="question"></div>
+            <div id="options" class="options"></div>
+            <button id="submit-answer" class="submit-answer" onclick="submitAnswer()">ส่งคำตอบ</button>
         </div>
     </div>
 
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // YouTube API
+        // Game variables
         let player;
+        let score = 0;
+        let questionsAnswered = 0;
+        let stones = [];
+        let usedQuestions = [];
+        let currentQuestion = null;
+        let selectedAnswer = null;
+
+        // Maze layout (1 = wall, 0 = path, 2 = start, 3 = end)
+        const mazeLayout = [
+            [1, 1, 1, 1, 1, 1, 1],
+            [2, 0, 0, 1, 0, 0, 0],
+            [1, 1, 0, 1, 0, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [1, 1, 1, 1, 0, 0, 3]
+        ];
+
+        // Questions database
+        const questions = [
+            {
+                question: "พระมหากษัตริย์พระองค์ใดทรงสถาปนากรุงรัตนโกสินทร์เป็นราชธานี?",
+                options: [
+                    "A. พระเจ้าตากสินมหาราช",
+                    "B. พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลกมหาราช",
+                    "C. พระบาทสมเด็จพระจอมเกล้าเจ้าอยู่หัว",
+                    "D. พระบาทสมเด็จพระปกเกล้าเจ้าอยู่หัว"
+                ],
+                correct: 1
+            },
+            {
+                question: "เหตุผลหลักที่ย้ายราชธานีจากฝั่งธนบุรีมาฝั่งพระนครคืออะไร?",
+                options: [
+                    "A. พื้นที่ฝั่งพระนครมีภูเขาและป่าไม้",
+                    "B. ฝั่งธนบุรีไม่มีแม่น้ำ",
+                    "C. ฝั่งธนบุรีคับแคบและไม่ปลอดภัย",
+                    "D. ฝั่งพระนครมีประชากรมากกว่า"
+                ],
+                correct: 2
+            },
+            {
+                question: "วันที่มีการสถาปนากรุงรัตนโกสินทร์คือวันที่ใด?",
+                options: [
+                    "A. 13 เมษายน พ.ศ. 2325",
+                    "B. 6 เมษายน พ.ศ. 2325",
+                    "C. 5 ธันวาคม พ.ศ. 2475",
+                    "D. 1 มกราคม พ.ศ. 2325"
+                ],
+                correct: 1
+            },
+            {
+                question: "ข้อใด ไม่ใช่ ปัจจัยที่ทำให้กรุงรัตนโกสินทร์เหมาะกับการเป็นราชธานี?",
+                options: [
+                    "A. มีแม่น้ำเจ้าพระยาไหลผ่าน",
+                    "B. เป็นพื้นที่ลุ่มที่มีน้ำท่วมบ่อย",
+                    "C. เหมาะแก่การวางผังเมือง",
+                    "D. สามารถป้องกันข้าศึกได้ดี"
+                ],
+                correct: 1
+            },
+            {
+                question: "วัดใดเป็นที่ประดิษฐาน \"พระแก้วมรกต\"?",
+                options: [
+                    "A. วัดอรุณราชวราราม",
+                    "B. วัดเบญจมบพิตร",
+                    "C. วัดพระเชตุพนวิมลมังคลาราม",
+                    "D. วัดพระศรีรัตนศาสดาราม"
+                ],
+                correct: 3
+            }
+        ];
+
+        // YouTube Player
+        let youtubePlayer;
         let videoEnded = false;
 
         function onYouTubeIframeAPIReady() {
-            player = new YT.Player('youtube-player', {
+            youtubePlayer = new YT.Player('youtube-player', {
                 height: '100%',
                 width: '100%',
                 videoId: '-NeF2jrOWio',
                 playerVars: {
-                    'autoplay': 1,
-                    'controls': 0,
-                    'showinfo': 0,
+                    'playsinline': 1,
                     'rel': 0,
-                    'iv_load_policy': 3,
-                    'modestbranding': 1,
-                    'disablekb': 1
+                    'modestbranding': 1
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -430,159 +586,101 @@
         }
 
         function onPlayerReady(event) {
-            document.getElementById('videoOverlay').classList.add('hidden');
+            document.getElementById('video-overlay').style.display = 'none';
         }
 
         function onPlayerStateChange(event) {
             if (event.data == YT.PlayerState.ENDED) {
                 videoEnded = true;
-                document.getElementById('startGameBtn').style.display = 'block';
+                const startBtn = document.getElementById('start-game-btn');
+                startBtn.disabled = false;
+                startBtn.style.display = 'block';
+                startBtn.textContent = '🎮 เริ่มเกม';
             }
         }
 
-        // Load YouTube API
-        const tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        // Game Variables
-        const questions = [
-            {
-                q: "พระมหากษัตริย์พระองค์ใดทรงสถาปนากรุงรัตนโกสินทร์เป็นราชธานี?",
-                choices: [
-                    "A. พระเจ้าตากสินมหาราช",
-                    "B. พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลกมหาราช",
-                    "C. พระบาทสมเด็จพระจอมเกล้าเจ้าอยู่หัว",
-                    "D. พระบาทสมเด็จพระปกเกล้าเจ้าอยู่หัว"
-                ],
-                answer: 1
-            },
-            {
-                q: "เหตุผลหลักที่ย้ายราชธานีจากฝั่งธนบุรีมาฝั่งพระนครคืออะไร?",
-                choices: [
-                    "A. พื้นที่ฝั่งพระนครมีภูเขาและป่าไม้",
-                    "B. ฝั่งธนบุรีไม่มีแม่น้ำ",
-                    "C. ฝั่งธนบุรีคับแคบและไม่ปลอดภัย",
-                    "D. ฝั่งพระนครมีประชากรมากกว่า"
-                ],
-                answer: 2
-            },
-            {
-                q: "วันที่มีการสถาปนากรุงรัตนโกสินทร์คือวันที่ใด?",
-                choices: [
-                    "A. 13 เมษายน พ.ศ. 2325",
-                    "B. 6 เมษายน พ.ศ. 2325",
-                    "C. 5 ธันวาคม พ.ศ. 2475",
-                    "D. 1 มกราคม พ.ศ. 2325"
-                ],
-                answer: 1
-            },
-            {
-                q: "ข้อใด _ไม่ใช่_ ปัจจัยที่ทำให้กรุงรัตนโกสินทร์เหมาะกับการเป็นราชธานี?",
-                choices: [
-                    "A. มีแม่น้ำเจ้าพระยาไหลผ่าน",
-                    "B. เป็นพื้นที่ลุ่มที่มีน้ำท่วมบ่อย",
-                    "C. เหมาะแก่การวางผังเมือง",
-                    "D. สามารถป้องกันข้าศึกได้ดี"
-                ],
-                answer: 1
-            },
-            {
-                q: "วัดใดเป็นที่ประดิษฐาน \"พระแก้วมรกต\"?",
-                choices: [
-                    "A. วัดอรุณราชวราราม",
-                    "B. วัดเบญจมบพิตร",
-                    "C. วัดพระเชตุพนวิมลมังคลาราม",
-                    "D. วัดพระศรีรัตนศาสดาราม"
-                ],
-                answer: 3
-            }
-        ];
-
-        let gameState = {
-            score: 0,
-            questionsAnswered: 0,
-            playerPos: { x: 0, y: 0 },
-            stones: [],
-            usedQuestions: [],
-            maze: []
-        };
-
-        // Maze pattern (zigzag path)
-        const mazePattern = [
-            [1, 1, 1, 1, 1, 1, 0],
-            [0, 0, 0, 0, 0, 1, 0],
-            [0, 1, 1, 1, 1, 1, 0],
-            [0, 1, 0, 0, 0, 0, 0],
-            [0, 1, 1, 1, 1, 1, 2]
-        ];
-
+        // Initialize game
         function initGame() {
-            gameState.score = 0;
-            gameState.questionsAnswered = 0;
-            gameState.playerPos = { x: 0, y: 0 };
-            gameState.usedQuestions = [];
-            gameState.stones = generateStones();
-            
-            createMaze();
-            updateDisplay();
-            
-            document.querySelector('.video-section').style.display = 'none';
-            document.getElementById('gameSection').style.display = 'block';
-            document.getElementById('resultSection').style.display = 'none';
-        }
+            if (!videoEnded) {
+                alert('กรุณาดูวิดีโอให้จบก่อนเริ่มเกม');
+                return;
+            }
 
-        function generateStones() {
-            const stones = [];
-            const pathCells = [];
+            document.querySelector('.video-section').style.display = 'none';
+            document.getElementById('game-section').style.display = 'block';
             
-            // Find all path cells except start and end
-            for (let y = 0; y < 5; y++) {
-                for (let x = 0; x < 7; x++) {
-                    if (
-                        mazePattern[y][x] === 1 &&
-                        !(x === 0 && y === 0) && // not start
-                        !(x === 6 && y === 4)    // not end
-                    ) {
-                        pathCells.push({ x, y });
+            // Reset game state
+            score = 0;
+            questionsAnswered = 0;
+            usedQuestions = [];
+            stones = [];
+            
+            // Find start position
+            for (let row = 0; row < mazeLayout.length; row++) {
+                for (let col = 0; col < mazeLayout[row].length; col++) {
+                    if (mazeLayout[row][col] === 2) {
+                        player = { row, col };
+                        break;
                     }
                 }
             }
             
-            // Shuffle and pick 5 unique positions for stones
-            const shuffled = pathCells.slice().sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, 5);
+            generateStones();
+            renderMaze();
+            updateUI();
         }
 
-        function createMaze() {
+        // Generate random stone positions
+        function generateStones() {
+            const pathCells = [];
+            for (let row = 0; row < mazeLayout.length; row++) {
+                for (let col = 0; col < mazeLayout[row].length; col++) {
+                    if (mazeLayout[row][col] === 0) {
+                        pathCells.push({ row, col });
+                    }
+                }
+            }
+            
+            // Randomly select 5 positions for stones
+            for (let i = 0; i < 5 && pathCells.length > 0; i++) {
+                const randomIndex = Math.floor(Math.random() * pathCells.length);
+                stones.push(pathCells[randomIndex]);
+                pathCells.splice(randomIndex, 1);
+            }
+        }
+
+        // Render maze
+        function renderMaze() {
             const mazeElement = document.getElementById('maze');
             mazeElement.innerHTML = '';
             
-            for (let y = 0; y < 5; y++) {
-                for (let x = 0; x < 7; x++) {
+            for (let row = 0; row < mazeLayout.length; row++) {
+                for (let col = 0; col < mazeLayout[row].length; col++) {
                     const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.dataset.x = x;
-                    cell.dataset.y = y;
+                    cell.className = 'maze-cell';
                     
-                    if (mazePattern[y][x] === 0) {
+                    // Check if player is here
+                    if (player.row === row && player.col === col) {
+                        cell.classList.add('player');
+                        cell.textContent = '🚶';
+                    }
+                    // Check if stone is here
+                    else if (stones.some(stone => stone.row === row && stone.col === col)) {
+                        cell.classList.add('stone');
+                        cell.textContent = '🪨';
+                    }
+                    // Check cell type
+                    else if (mazeLayout[row][col] === 1) {
                         cell.classList.add('wall');
-                    } else if (x === 0 && y === 0) {
-                        cell.classList.add('start', 'player');
-                        cell.innerHTML = '🚶‍♂️';
-                    } else if (mazePattern[y][x] === 2) {
+                        cell.textContent = '🧱';
+                    } else if (mazeLayout[row][col] === 2) {
+                        cell.classList.add('start');
+                        cell.textContent = '🏁';
+                    } else if (mazeLayout[row][col] === 3) {
                         cell.classList.add('end');
-                        cell.innerHTML = '🏆';
+                        cell.textContent = '🏆';
                     } else {
                         cell.classList.add('path');
-                        
-                        // Check if this position has a stone
-                        const hasStone = gameState.stones.some(stone => stone.x === x && stone.y === y);
-                        if (hasStone) {
-                            cell.classList.add('stone');
-                            cell.innerHTML = '🪨';
-                        }
                     }
                     
                     mazeElement.appendChild(cell);
@@ -590,133 +688,162 @@
             }
         }
 
+        // Move player
         function movePlayer(direction) {
-            const { x, y } = gameState.playerPos;
-            let newX = x, newY = y;
+            let newRow = player.row;
+            let newCol = player.col;
             
             switch (direction) {
-                case 'up': newY = Math.max(0, y - 1); break;
-                case 'down': newY = Math.min(4, y + 1); break;
-                case 'left': newX = Math.max(0, x - 1); break;
-                case 'right': newX = Math.min(6, x + 1); break;
+                case 'up': newRow--; break;
+                case 'down': newRow++; break;
+                case 'left': newCol--; break;
+                case 'right': newCol++; break;
             }
             
-            // Check if new position is valid (not a wall)
-            if (mazePattern[newY][newX] !== 0) {
-                // Remove player from old position
-                const oldCell = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
-                oldCell.classList.remove('player');
-                oldCell.innerHTML = '';
-                
-                // Update player position
-                gameState.playerPos = { x: newX, y: newY };
-                
-                // Add player to new position
-                const newCell = document.querySelector(`[data-x="${newX}"][data-y="${newY}"]`);
-                newCell.classList.add('player');
-                newCell.innerHTML = '🚶‍♂️';
-                
-                // Check for stone collision
-                const stoneIndex = gameState.stones.findIndex(stone => stone.x === newX && stone.y === newY);
-                if (stoneIndex !== -1 && newCell.classList.contains('stone')) {
-                    showQuestion(stoneIndex);
-                }
-                
-                // Check if reached the end
-                if (mazePattern[newY][newX] === 2 && gameState.questionsAnswered >= 5) {
-                    endGame();
-                }
+            // Check boundaries
+            if (newRow < 0 || newRow >= mazeLayout.length || 
+                newCol < 0 || newCol >= mazeLayout[0].length) {
+                return;
             }
+            
+            // Check if it's a wall
+            if (mazeLayout[newRow][newCol] === 1) {
+                return;
+            }
+            
+            // Move player
+            player.row = newRow;
+            player.col = newCol;
+            
+            // Check if player hit a stone
+            const stoneIndex = stones.findIndex(stone => stone.row === newRow && stone.col === newCol);
+            if (stoneIndex !== -1) {
+                stones.splice(stoneIndex, 1);
+                showQuestion();
+            }
+            
+            // Check if player reached the end
+            if (mazeLayout[newRow][newCol] === 3 && stones.length === 0) {
+                endGame();
+            }
+            
+            renderMaze();
+            updateUI();
         }
 
-        function showQuestion(stoneIndex) {
-            const availableQuestions = questions.filter((_, index) => !gameState.usedQuestions.includes(index));
-            if (availableQuestions.length === 0) return;
+        // Show question modal
+        function showQuestion() {
+            if (usedQuestions.length >= questions.length) {
+                return;
+            }
             
-            const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-            const question = availableQuestions[randomIndex];
-            const originalIndex = questions.indexOf(question);
+            let questionIndex;
+            do {
+                questionIndex = Math.floor(Math.random() * questions.length);
+            } while (usedQuestions.includes(questionIndex));
             
-            document.getElementById('questionText').textContent = question.q;
+            usedQuestions.push(questionIndex);
+            currentQuestion = questions[questionIndex];
             
-            const choicesContainer = document.getElementById('choicesContainer');
-            choicesContainer.innerHTML = '';
+            document.getElementById('question-text').textContent = currentQuestion.question;
             
-            question.choices.forEach((choice, index) => {
-                const button = document.createElement('button');
-                button.className = 'choice-btn';
-                button.textContent = choice;
-                button.onclick = () => answerQuestion(index, question.answer, originalIndex, stoneIndex);
-                choicesContainer.appendChild(button);
+            const optionsElement = document.getElementById('options');
+            optionsElement.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                optionElement.onclick = () => selectOption(index);
+                optionsElement.appendChild(optionElement);
             });
             
-            document.getElementById('questionModal').style.display = 'flex';
+            selectedAnswer = null;
+            document.getElementById('question-modal').style.display = 'block';
         }
 
-        function answerQuestion(selectedIndex, correctIndex, questionIndex, stoneIndex) {
-            const isCorrect = selectedIndex === correctIndex;
-            
-            if (isCorrect) {
-                gameState.score += 10;
+        // Select option
+        function selectOption(index) {
+            selectedAnswer = index;
+            document.querySelectorAll('.option').forEach((option, i) => {
+                option.classList.toggle('selected', i === index);
+            });
+        }
+
+        // Submit answer
+        function submitAnswer() {
+            if (selectedAnswer === null) {
+                alert('กรุณาเลือกคำตอบ');
+                return;
             }
             
-            gameState.questionsAnswered++;
-            gameState.usedQuestions.push(questionIndex);
+            if (selectedAnswer === currentQuestion.correct) {
+                score += 10;
+                alert('ถูกต้อง! +10 คะแนน');
+            } else {
+                alert('ผิด! คำตอบที่ถูกคือ ' + currentQuestion.options[currentQuestion.correct]);
+            }
             
-            // Remove stone
-            const { x, y } = gameState.stones[stoneIndex];
-            const cell = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
-            cell.classList.remove('stone');
-            cell.innerHTML = '🚶‍♂️'; // Player is on this cell
-            
-            gameState.stones.splice(stoneIndex, 1);
-            
-            document.getElementById('questionModal').style.display = 'none';
-            updateDisplay();
-            
-            // Show feedback
-            setTimeout(() => {
-                alert(isCorrect ? '✅ ถูกต้อง! +10 คะแนน' : '❌ ผิด! ไม่ได้คะแนน');
-            }, 100);
+            questionsAnswered++;
+            document.getElementById('question-modal').style.display = 'none';
+            updateUI();
         }
 
-        function updateDisplay() {
-            document.getElementById('scoreDisplay').textContent = gameState.score;
-            document.getElementById('questionsLeft').textContent = 5 - gameState.questionsAnswered;
+        // Update UI
+        function updateUI() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('questions-left').textContent = stones.length;
         }
 
+        // End game
         function endGame() {
-            document.getElementById('gameSection').style.display = 'none';
-            document.getElementById('resultSection').style.display = 'block';
-            document.getElementById('finalScore').textContent = `${gameState.score}/50`;
+            document.getElementById('game-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'block';
+            document.getElementById('final-score').textContent = score + '/50';
         }
 
-        function restartGame() {
-            initGame();
+        // Reset game
+        function resetGame() {
+            document.getElementById('result-section').style.display = 'none';
+            document.querySelector('.video-section').style.display = 'block';
+            
+            // Reset YouTube player
+            if (youtubePlayer) {
+                youtubePlayer.seekTo(0);
+                youtubePlayer.pauseVideo();
+            }
+            
+            videoEnded = false;
+            document.getElementById('start-game-btn').disabled = true;
+            document.getElementById('start-game-btn').style.display = 'none';
         }
 
         // Keyboard controls
-        document.addEventListener('keydown', (e) => {
-            if (document.getElementById('gameSection').style.display === 'block') {
-                switch (e.key.toLowerCase()) {
-                    case 'arrowup':
+        document.addEventListener('keydown', (event) => {
+            if (document.getElementById('game-section').style.display === 'block') {
+                switch (event.key) {
+                    case 'ArrowUp':
                     case 'w':
-                        e.preventDefault();
+                    case 'W':
+                        event.preventDefault();
                         movePlayer('up');
                         break;
-                    case 'arrowdown':
+                    case 'ArrowDown':
                     case 's':
-                        e.preventDefault();
+                    case 'S':
+                        event.preventDefault();
                         movePlayer('down');
                         break;
-                    case 'arrowleft':
+                    case 'ArrowLeft':
                     case 'a':
-                        e.preventDefault();
+                    case 'A':
+                        event.preventDefault();
                         movePlayer('left');
                         break;
-                    case 'arrowright':
+                    case 'ArrowRight':
                     case 'd':
-                        e.preventDefault();
+                    case 'D':
+                        event.preventDefault();
                         movePlayer('right');
                         break;
                 }
@@ -724,13 +851,15 @@
         });
 
         // Start game button
-        document.getElementById('startGameBtn').addEventListener('click', () => {
-            if (videoEnded) {
-                initGame();
-            } else {
-                alert('โปรดรอให้วิดีโอจบก่อนเริ่มเกม');
+        document.getElementById('start-game-btn').addEventListener('click', initGame);
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('question-modal');
+            if (event.target === modal) {
+                // Don't allow closing modal by clicking outside during questions
             }
-        });
+        }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'958d8507d16c5f3c',t:'MTc1MTQ1Mjc3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'95b7f76081497325',t:'MTc1MTg5Nzg1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
