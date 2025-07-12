@@ -15,6 +15,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 15px; /* Add padding for smaller screens */
+            box-sizing: border-box;
         }
         .main-container {
             background: rgba(255,255,255,0.93);
@@ -24,49 +26,82 @@
             text-align: center;
             border: 4px solid #FFD700;
             animation: fadeInUp 0.7s;
+            width: 100%; /* Make it full width on mobile */
+            max-width: 500px; /* Set a max-width for desktop */
+            box-sizing: border-box;
         }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(40px);}
             to { opacity: 1; transform: translateY(0);}
         }
-        h1 {
+        .main-container h1 {
             color: #8B4513;
-            font-size: 2.7rem;
+            font-size: 2.3rem;
+            font-weight: 800;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.08);
             letter-spacing: 1px;
+            text-shadow: 2px 2px 8px #FFD70022;
         }
-        .credit {
+        .main-container .credit {
             color: #D2691E;
-            font-size: 1.1rem;
-            margin-bottom: 30px;
+            font-size: 1.13rem;
+            margin-bottom: 32px;
+        }
+        .main-container .icon {
+            width:70px;
+            height:70px;
+            display:block;
+            margin:0 auto 10px auto;
+            filter:drop-shadow(0 2px 8px #FFD70088);
         }
         .nav-btns {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
             margin-top: 20px;
         }
         .nav-btns a {
             text-decoration: none;
+            width: 100%;
         }
         .main-btn {
             background: linear-gradient(45deg, #FFD700, #FFA500);
             color: #8B4513;
             border: none;
-            padding: 18px 40px;
-            font-size: 1.3rem;
+            padding: 18px 0;
+            font-size: 1.25rem;
             font-weight: 600;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 5px 15px rgba(0,0,0,0.13);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         .main-btn:hover {
             transform: translateY(-2px) scale(1.04);
             box-shadow: 0 8px 25px rgba(0,0,0,0.18);
             background: linear-gradient(45deg, #FFA500, #FFD700);
         }
+        .main-btn .icon-text {
+            font-size: 1.5rem;
+        }
+        .footer-note {
+            margin-top:38px; 
+            color:#8B4513; 
+            font-size:1.05rem; 
+            opacity:0.7;
+        }
+        .footer-note span {
+            background:rgba(255,215,0,0.13);
+            padding:7px 18px;
+            border-radius:14px;
+            border:1.5px solid #FFD700;
+        }
+
         /* Mini Gemini Chat Button & Popup (เหมือน index.html) */
         #mini-gemini-btn {
             position: fixed;
@@ -183,62 +218,134 @@
         #mini-gemini-send:hover {
             background: linear-gradient(45deg, #FFA500, #FFD700);
         }
+        
+        /* Update Popup Styles */
+        #update-popup {
+            display:block;
+            position:fixed;
+            z-index:20000;
+            left:0;
+            top:0;
+            width:100vw;
+            height:100vh;
+            background:rgba(0,0,0,0.25);
+            backdrop-filter:blur(1.5px);
+        }
+        .update-popup-content {
+            background:rgba(255,255,255,0.98);
+            border:3px solid #FFD700;
+            border-radius:22px;
+            box-shadow:0 8px 32px rgba(0,0,0,0.18);
+            max-width:380px;
+            width:90vw;
+            padding:28px 22px 18px 22px;
+            position:absolute;
+            left:50%;
+            top:50%;
+            transform:translate(-50%,-50%);
+            text-align:left;
+        }
+        .update-popup-content h2 {
+            color:#8B4513;
+            font-size:1.35rem;
+            margin:0 0 10px 0;
+            font-weight:700;
+        }
+        .update-popup-content h2 span {
+            font-size:1rem;
+            color:#D2691E;
+        }
+        .update-popup-content ul {
+            color:#654321;
+            font-size:1.08rem;
+            line-height:1.7;
+            margin:0 0 18px 18px;
+            padding:0;
+        }
+        .update-popup-content .close-btn-container {
+            text-align:right;
+        }
+        #close-update-popup {
+            background:linear-gradient(45deg,#FFD700,#FFA500);
+            color:#8B4513;
+            border:none;
+            padding:10px 28px;
+            font-size:1.1rem;
+            font-weight:600;
+            border-radius:40px;
+            cursor:pointer;
+            box-shadow:0 2px 10px rgba(0,0,0,0.10);
+            transition:all 0.2s;
+        }
+
+        /* Responsive Styles */
         @media (max-width: 600px) {
             .main-container {
-                padding: 20px 5px;
+                padding: 25px 15px;
             }
-            h1 {
-                font-size: 1.5rem;
+            .main-container h1 {
+                font-size: 1.8rem;
+            }
+            .main-container .credit {
+                font-size: 1rem;
+                margin-bottom: 25px;
             }
             .main-btn {
                 font-size: 1.1rem;
-                padding: 14px 10px;
+                padding: 16px 10px;
+            }
+            .nav-btns {
+                gap: 18px;
+            }
+            .footer-note {
+                font-size: 0.9rem;
             }
         }
     </style>
 </head>
 <body>
     <!-- Update Popup -->
-    <div id="update-popup" style="display:block;position:fixed;z-index:20000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.25);backdrop-filter:blur(1.5px);">
-        <div style="background:rgba(255,255,255,0.98);border:3px solid #FFD700;border-radius:22px;box-shadow:0 8px 32px rgba(0,0,0,0.18);max-width:380px;width:90vw;padding:28px 22px 18px 22px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:left;">
-            <h2 style="color:#8B4513;font-size:1.35rem;margin:0 0 10px 0;font-weight:700;">
-                🆕 Update 1.1 <span style="font-size:1rem;color:#D2691E;">(ChatBot UPDATE)</span>
+    <div id="update-popup">
+        <div class="update-popup-content">
+            <h2>
+                🆕 Update 1.1 <span>(ChatBot UPDATE)</span>
             </h2>
-            <ul style="color:#654321;font-size:1.08rem;line-height:1.7;margin:0 0 18px 18px;padding:0;">
+            <ul>
                 <li>เพิ่มปุ่ม <b>Gemini แชทด่วน</b> (มุมขวาล่าง) ทุกหน้า ยกเว้นหน้าแชทหลัก</li>
                 <li>ปรับธีมสีเว็บไซต์ใหม่ (ทอง-น้ำตาล) ให้เหมือนกันทุกหน้า</li>
                 <li>หน้า <b>ChatBot</b> ปรับดีไซน์ใหม่และรองรับประวัติแชท</li>
                 <li>แก้ไขปุ่มนำทางและประสบการณ์ใช้งานให้ลื่นไหลขึ้น</li>
             </ul>
-            <div style="text-align:right;">
-                <button id="close-update-popup" style="background:linear-gradient(45deg,#FFD700,#FFA500);color:#8B4513;border:none;padding:10px 28px;font-size:1.1rem;font-weight:600;border-radius:40px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.10);transition:all 0.2s;">ปิด</button>
+            <div class="close-btn-container">
+                <button id="close-update-popup">ปิด</button>
             </div>
         </div>
     </div>
-    <div class="main-container" style="box-shadow: 0 16px 48px 0 rgba(139,69,19,0.13); border: 5px solid #FFD700; max-width: 500px;">
-        <div style="margin-bottom: 18px;">
-            <img src="https://cdn-icons-png.flaticon.com/512/3176/3176367.png" alt="history" style="width:70px;height:70px;display:block;margin:0 auto 10px auto;filter:drop-shadow(0 2px 8px #FFD70088);">
+
+    <div class="main-container">
+        <div>
+            <img src="https://cdn-icons-png.flaticon.com/512/3176/3176367.png" alt="history" class="icon">
         </div>
-        <h1 style="font-size:2.3rem; color:#8B4513; font-weight:800; margin-bottom:10px; letter-spacing:1px; text-shadow: 2px 2px 8px #FFD70022;">
+        <h1>
             🏛️ ยินดีต้อนรับ🏛️<br>เว็บไซต์ประวัติศาสตร์
         </h1>
-        <div class="credit" style="font-size:1.13rem; color:#D2691E; margin-bottom:32px;">
+        <div class="credit">
             จัดทำโดย <b>ด.ช.ธนันชัย กัลพฤกษ์</b> ม.3/1 เลขที่ 5 ปี 2568
         </div>
-        <div class="nav-btns" style="gap: 24px;">
-            <a href="MainPage.html" style="width:100%;">
-                <button class="main-btn" style="width:100%;font-size:1.25rem;padding:18px 0;display:flex;align-items:center;justify-content:center;gap:10px;">
-                    <span style="font-size:1.5rem;">🎮</span> <span>เล่นเกมประวัติศาสตร์</span>
+        <div class="nav-btns">
+            <a href="MainPage.html">
+                <button class="main-btn">
+                    <span class="icon-text">🎮</span> <span>เล่นเกมประวัติศาสตร์</span>
                 </button>
             </a>
-            <a href="ChatBot.html" style="width:100%;">
-                <button class="main-btn" style="width:100%;font-size:1.25rem;padding:18px 0;display:flex;align-items:center;justify-content:center;gap:10px;">
-                    <span style="font-size:1.5rem;">🤖</span> <span>คุยกับ Gemini</span>
+            <a href="ChatBot.html">
+                <button class="main-btn">
+                    <span class="icon-text">🤖</span> <span>คุยกับ Gemini</span>
                 </button>
             </a>
         </div>
-        <div style="margin-top:38px; color:#8B4513; font-size:1.05rem; opacity:0.7;">
-            <span style="background:rgba(255,215,0,0.13);padding:7px 18px;border-radius:14px;border:1.5px solid #FFD700;">
+        <div class="footer-note">
+            <span>
                 เว็บไซต์นี้สร้างขึ้นเพื่อการศึกษาและความสนุก
             </span>
         </div>
