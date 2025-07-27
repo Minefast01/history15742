@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คุยกับ Gemini</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #F4A460 100%) !important;
+        }
+        .bg-white {
+            background: rgba(255,255,255,0.97) !important;
+        }
+        .bg-gray-50 {
+            background: #f9f6ef !important;
+        }
+        .bg-blue-600 {
+            background: linear-gradient(45deg, #FFD700, #FFA500) !important;
+            color: #8B4513 !important;
+        }
+        .hover\:bg-blue-700:hover {
+            background: linear-gradient(45deg, #FFA500, #FFD700) !important;
+            color: #8B4513 !important;
+        }
+        .text-blue-600, .text-blue-700 {
+            color: #8B4513 !important;
+        }
+        .rounded-lg, .rounded-full {
+            border-radius: 18px !important;
+        }
+        .shadow-md {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.13) !important;
+        }
+        .sidebar {
+            background: rgba(255,255,255,0.97) !important;
+        }
+        .typing-indicator::after {
+            content: '...';
+            animation: dots 1s infinite;
+        }
+        @keyframes dots {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+        }
+        .message {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .gemini-message p {
+            margin-bottom: 0.5rem;
+        }
+        .gemini-message ul, .gemini-message ol {
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .gemini-message li {
+            margin-bottom: 0.25rem;
+        }
+        .gemini-message pre {
+            background-color: #1f2937;
+            color: #f3f4f6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin-bottom: 0.5rem;
+        }
+        .gemini-message img {
+            max-width: 100%;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        .sidebar-hidden {
+            transform: translateX(-100%);
+        }
+        @media (min-width: 768px) {
+            .sidebar-hidden {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex" style="background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #F4A460 100%) !important;">
+    <div id="chat-container" class="flex flex-col h-screen w-full" style="max-width: 540px; margin: 40px auto; background:rgba(255,255,255,0.93); border-radius:28px; box-shadow:0 16px 48px 0 rgba(139,69,19,0.13); border:5px solid #FFD700;">
+        <header class="bg-white shadow-md p-4 flex items-center justify-between" style="background:rgba(255,255,255,0.97) !important; border-radius:22px 22px 0 0;">
+            <div class="flex items-center gap-2">
+                <button id="toggle-sidebar" class="md:hidden p-2 rounded-lg hover:bg-gray-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <h1 class="text-2xl font-bold text-gray-800" style="color:#8B4513 !important;">คุยกับ Gemini</h1>
+            </div>
+            <button id="new-chat" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition" style="background:linear-gradient(45deg,#FFD700,#FFA500);color:#8B4513;font-weight:600;">เริ่มแชทใหม่</button>
+        </header>
+        <div class="flex flex-1 overflow-hidden">
+            <div id="sidebar" class="sidebar w-64 bg-white shadow-md p-4 overflow-y-auto md:w-80 sidebar-hidden md:block" style="background:rgba(255,255,255,0.97) !important; border-radius:0 0 0 22px;">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4" style="color:#8B4513 !important;">ประวัติแชท</h2>
+                <div id="chat-list" class="space-y-2"></div>
+            </div>
+            <div class="flex flex-col flex-1">
+                <div id="messages" class="flex-grow overflow-y-auto p-4 bg-gray-50" style="background:#f9f6ef !important;"></div>
+                <div id="input-container" class="bg-white p-4 border-t border-gray-200" style="background:rgba(255,255,255,0.97) !important; border-radius:0 0 22px 22px;">
+                    <div class="flex gap-2 max-w-2xl mx-auto">
+                        <input type="text" id="user-input" placeholder="พิมพ์ข้อความของคุณ..." class="flex-grow p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" style="border-radius:14px;">
+                        <button id="send-button" class="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition" style="background:linear-gradient(45deg,#FFD700,#FFA500);color:#8B4513;font-weight:600;">ส่ง</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const messagesDiv = document.getElementById('messages');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const chatListDiv = document.getElementById('chat-list');
+        const newChatButton = document.getElementById('new-chat');
+        const toggleSidebarButton = document.getElementById('toggle-sidebar');
+        const sidebar = document.getElementById('sidebar');
+
+        // API endpoint และ API key
+        const TEXT_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+        const API_KEY = 'AIzaSyDle9djjRBh-23IgjsaKQluC2ghPj60Y6A';
+
+        // จัดการประวัติแชทใน localStorage
+        let chats = JSON.parse(localStorage.getItem('chats')) || [];
+        let currentChatId = chats.length > 0 ? chats[chats.length - 1].id : null;
+
+        // ฟังก์ชันสร้าง ID สำหรับแชท
+        function generateChatId() {
+            return 'chat_' + Date.now();
+        }
+
+        // ฟังก์ชันลบแชท
+        function deleteChat(chatId) {
+            chats = chats.filter(c => c.id !== chatId);
+            localStorage.setItem('chats', JSON.stringify(chats));
+            if (chatId === currentChatId) {
+                if (chats.length > 0) {
+                    loadChat(chats[chats.length - 1].id);
+                } else {
+                    startNewChat();
+                }
+            } else {
+                updateChatList();
+            }
+        }
+
+        // ฟังก์ชันโหลดแชท
+        function loadChat(chatId) {
+            currentChatId = chatId;
+            messagesDiv.innerHTML = '';
+            const chat = chats.find(c => c.id === chatId);
+            if (chat) {
+                chat.messages.forEach(msg => {
+                    if (msg.image) {
+                        addMessage('', false, false, msg.image);
+                    } else {
+                        addMessage(msg.content, msg.role === 'user');
+                    }
+                });
+            }
+            updateChatList();
+            userInput.placeholder = 'พิมพ์ข้อความของคุณ...';
+        }
+
+        // ฟังก์ชันอัปเดตรายการแชท
+        function updateChatList() {
+            chatListDiv.innerHTML = '';
+            chats.forEach(chat => {
+                const chatItem = document.createElement('div');
+                chatItem.className = `flex justify-between items-center p-3 rounded-lg cursor-pointer ${chat.id === currentChatId ? 'bg-blue-100' : 'hover:bg-gray-100'}`;
+                chatItem.innerHTML = `
+                    <p class="font-medium truncate flex-1">${chat.title || 'แชทใหม่'}</p>
+                    <button class="delete-chat p-1 rounded-full hover:bg-red-100" data-chat-id="${chat.id}">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                `;
+                chatItem.querySelector('p').addEventListener('click', () => {
+                    loadChat(chat.id);
+                    sidebar.classList.add('sidebar-hidden');
+                });
+                chatItem.querySelector('.delete-chat').addEventListener('click', () => {
+                    if (confirm('คุณต้องการลบแชทนี้หรือไม่?')) {
+                        deleteChat(chat.id);
+                    }
+                });
+                chatListDiv.appendChild(chatItem);
+            });
+        }
+
+        // ฟังก์ชันเริ่มแชทใหม่
+        function startNewChat() {
+            const newChat = {
+                id: generateChatId(),
+                title: '',
+                messages: []
+            };
+            chats.push(newChat);
+            localStorage.setItem('chats', JSON.stringify(chats));
+            loadChat(newChat.id);
+        }
+
+        // ฟังก์ชันแปลงข้อความเป็น HTML สำหรับจัดรูปแบบ
+        function formatMessage(content) {
+            let html = '';
+            let isCodeBlock = false;
+            let codeBlockContent = '';
+
+            const lines = content.split('\n').filter(line => line.trim());
+
+            lines.forEach((line, index) => {
+                if (line.trim().startsWith('```')) {
+                    if (isCodeBlock) {
+                        html += `<pre>${codeBlockContent}</pre>`;
+                        codeBlockContent = '';
+                        isCodeBlock = false;
+                    } else {
+                        isCodeBlock = true;
+                    }
+                    return;
+                }
+
+                if (isCodeBlock) {
+                    codeBlockContent += line + '\n';
+                    return;
+                }
+
+                line = line.replace(/\*\*([^\*]+)\*\*|(\*[^\*]+\*)/g, '<strong>$1$2</strong>');
+
+                if (line.match(/^[-*]\s|^[0-9]+\.\s/)) {
+                    const isOrdered = line.match(/^[0-9]+\.\s/);
+                    const listTag = isOrdered ? 'ol' : 'ul';
+                    let listItems = '';
+                    let i = index;
+                    while (i < lines.length && lines[i].match(/^[-*]\s|^[0-9]+\.\s/)) {
+                        const text = lines[i].replace(/^[-*]\s|^[0-9]+\.\s/, '').trim();
+                        listItems += `<li>${text}</li>`;
+                        i++;
+                    }
+                    html += `<${listTag}>${listItems}</${listTag}>`;
+                    lines.splice(index, i - index - 1);
+                } else {
+                    html += `<p>${line.trim()}</p>`;
+                }
+            });
+
+            if (isCodeBlock && codeBlockContent) {
+                html += `<pre>${codeBlockContent}</pre>`;
+            }
+
+            return html || '<p>ไม่มีข้อความ</p>';
+        }
+
+        // ฟังก์ชันเพิ่มข้อความหรือรูปภาพลงในแชท
+        function addMessage(content, isUser, isTyping = false, imageUrl = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message max-w-[80%] p-3 rounded-lg mb-3 ${
+                isUser ? 'bg-blue-600 text-white ml-auto' : 
+                isTyping ? 'bg-gray-200 text-gray-600 mr-auto typing-indicator' : 
+                'bg-gray-200 text-gray-800 mr-auto'
+            }`;
+            messageDiv.innerHTML = isUser || isTyping ? content : formatMessage(content);
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            if (!isTyping && currentChatId) {
+                const chat = chats.find(c => c.id === currentChatId);
+                if (chat) {
+                    chat.messages.push({ role: isUser ? 'user' : 'assistant', content });
+                    if (!chat.title && isUser) {
+                        chat.title = content.substring(0, 30);
+                    }
+                    localStorage.setItem('chats', JSON.stringify(chats));
+                    updateChatList();
+                }
+            }
+
+            return messageDiv;
+        }
+
+        // ฟังก์ชันส่งข้อความหรือพรอมต์สร้างรูปภาพ
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            userInput.value = '';
+
+            const typingMessage = addMessage('Gemini กำลังพิมพ์...', false, true);
+            try {
+                const response = await fetch(`${TEXT_API_URL}?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [
+                            {
+                                parts: [
+                                    { text: message }
+                                ]
+                            }
+                        ]
+                    })
+                });
+
+                typingMessage.remove();
+
+                if (!response.ok) {
+                    throw new Error(`ไม่สามารถเชื่อมต่อกับ Gemini API ได้: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const geminiResponse = data.candidates[0].content.parts[0].text.trim();
+                addMessage(geminiResponse, false);
+            } catch (error) {
+                typingMessage.remove();
+                addMessage('เกิดข้อผิดพลาด: ' + error.message, false);
+            }
+        }
+
+        // Event listeners
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        newChatButton.addEventListener('click', startNewChat);
+        toggleSidebarButton.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-hidden');
+        });
+
+        // โหลดแชทล่าสุดเมื่อเริ่ม
+        if (chats.length === 0) {
+            startNewChat();
+        } else {
+            loadChat(currentChatId);
+        }
+
+        // โฟกัสที่ช่อง input
+        userInput.focus();
+    </script>
+</body>
+</html>
