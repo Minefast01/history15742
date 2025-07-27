@@ -80,6 +80,33 @@
     </div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+    // เพิ่มหรือแก้ไขฟังก์ชัน onYouTubeIframeAPIReady ให้ใช้ videoId ใหม่
+    function onYouTubeIframeAPIReady() {
+        youtubePlayer = new YT.Player('youtube-player', {
+            height: '100%',
+            width: '100%',
+            videoId: '-NeF2jrOWio', // เปลี่ยนเป็นคลิปใหม่
+            playerVars: {
+                'playsinline': 1,
+                'rel': 0,
+                'modestbranding': 1
+            },
+            events: {
+                'onReady': function(event) {
+                    document.getElementById('video-overlay').style.display = 'none';
+                },
+                'onStateChange': function(event) {
+                    if (event.data == YT.PlayerState.ENDED) {
+                        document.getElementById('start-game-btn').disabled = false;
+                        document.getElementById('start-game-btn').style.display = 'block';
+                        document.getElementById('start-game-btn').textContent = '🎮 เริ่มเกม';
+                    }
+                }
+            }
+        });
+    }
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
